@@ -1,0 +1,18 @@
+Standard Setup:
+
+Materials:
+- Use Currys Green Measuring Board
+- Black foam card for boundary setting
+-IPEVO camera plugged in.
+- Two thorfire multicolored lamps.
+
+
+1) Mat, lamps and camera are aligned on desk
+2) Paper is placed in marked area on Curry's cutting board.
+3) IPEVO chromium software is started, and fine adjustments are made if necessary.
+	- camera is centered around the paper and markings
+	 - maximal resolution is used.
+	  - two lights are put on either side of the document, or directly on each side of the scanner base itself.
+4) Scans are done, and saved to respective folder.
+
+Note: See images in this folder to achieve camera positioning and zoom
