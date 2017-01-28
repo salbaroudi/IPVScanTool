@@ -25,30 +25,31 @@ Other Notes:
 
 versionString = '''
  
-ipvscantools version XX.Y. Created by Sean al-Baroudi (sean.al.baroudi@gmail.com)
+ipvscantools version 0.1. Created by Sean al-Baroudi (sean.al.baroudi@gmail.com)
 '''
 
+#Our getopt options.
 deleteSwitch = False
 invertSwitch = False
 filePrefix = ""
 
-inputDir = "./"
-oputputDir = "./"
+inputDir = "~/"
+outputDir = "~/"
 
-
-def main():
+#[1]
+def processargs():
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "hvdin:")
 	except getopt.GetoptError as err:
 		print(err)
 		sys.exit(2)
-		
+
 	if (len(args) != 2):
 		print("Two folder destinations (input and output) need to be given. Check argument string.")
 		sys.exit(2)
 
-	inputDir = args[0]
-	outputDir = args[1]
+	inputDir = inputDir + args[0]
+	outputDir = outputDir +  args[1]
 
 	for o, a in opts:
 		if o == "-h":
@@ -57,19 +58,42 @@ def main():
 			print(versionString)
 		elif o == "-i":
 			invertSwitch = True
-			print("InvertSwitch Triggered")
 		elif o == "-d":
 			deleteSwitch = True
-			print("DeleteSwitch Triggered")
-		elif (o == "-n" and  a != ""	): #!!!
+		elif (o == "-n" and  a != ""): 
 			filePrefix = a
 		else:
 			print("An unrecognized option or format has appeared. Please check your argument string")
 			sys.exit(2)
 
-	print("first arg was:" + inputDir)
-	print("second arg was" + outputDir)
-	print("file prefix is", filePrefix)
+
+def main():
+	processargs() #everything is global anyways.
+
+	#We have our arguements, lets load our files.
+	
+	dirList = os.listdir(inputDir)
+	jpgList = []
+	for item in dirList:
+		if (".jpg" in item):
+			jpgList.append(item)
+			
+	if (length(jpgList) == 0):
+		print("No JPGs in input directory. Aborting.")
+		sys.exit(2)
+	
+	#presumably the directory has JPGS, lets move on.
+	for imgName in jpgList:
+		cropImage(inputDir + "/" + imgName)
+		
+		
+		
+		
+	
+
+	os.chdir(inputDir)
+	#get a list of all .jpg files (pumped out by IPEVO software)
+	
 
 if __name__ == "__main__":
 	main()
