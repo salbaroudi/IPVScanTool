@@ -18,6 +18,9 @@ ipvscantools -h -v -d -i -n [filenaming] [folder to read] [folder to write to]
 	-d: Delete temp files in folder, after you are done (stupidly hunts for all .jpg files, and kills them). 
 	-n: Prefix for naming of files.
 	-i: Invert image colors.
+	-t: threshold counts for page boundary in Edge image analysis. Default is 10000.
+	-e: Epsilon Margin for crop; can be positive (bigger crop) or negative (smaller crop). Default is zero
+	-s: Skip Step; when histograming, only every xth pixel is considered. Define X with this. Default is 3
 
 Other Notes:
 	- Script will autorotate and crop images, based on predefined standard.
@@ -42,14 +45,22 @@ inputDir = ""
 outputDir = ""
 
 #Crop algorithm global variables:
-noiseThreshold = 10000
-epsilonBackPix = 5 #Once we find a point, we step back a few pixels, to reduce overcrop.
+threshold = 10000
+epShift = 0 #Once we find a point, we step back a few pixels, to reduce overcrop.
 skipStep = 3
 #[1]
+
+def printparameters():
+	print("threshold:" + str(threshold))
+	print("epShift:" + str(epShift))
+	print("skipStep:" + str(skipStep))
+	return
+
 def processargs():
 	global deleteSwitch, invertSwitch, filePrefix, inputDir, outputDir #[2]
+	global threshold, skipStep
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hvdin:")
+		opts, args = getopt.getopt(sys.argv[1:], "hvdin:t:s:")
 	except getopt.GetoptError as err:
 		print(err)
 		sys.exit(2)
@@ -64,6 +75,7 @@ def processargs():
 	print("inputDir is:" + inputDir)
 	print("outputDir is:" + outputDir)
 
+	#I could be a lot more robust in error checking. This will follow in a later version.
 	for o, a in opts:
 		if o == "-h":
 			print(helpString)
@@ -75,9 +87,16 @@ def processargs():
 			deleteSwitch = True
 		elif (o == "-n" and  a != ""): 
 			filePrefix = a
+		elif (o == "-t" and  a != ""):  #target threshold
+			threshold = int(a)
+		elif (o == "-s" and  a != ""):  #skipstep (to speed up histogram calcs)
+			skipStep = int(a)
 		else:
 			print("An unrecognized option or format has appeared. Please check your argument string")
 			sys.exit(2)
+
+	printparameters()
+	return
 
 def prepimage(imLoc):
 	im = Image.open(imLoc)
@@ -106,7 +125,7 @@ def findcorners(vVector,hVector):
 			tVCoord = i
 			break
 	bVCoord = 0
-	for i in range(vVector.size, 0, -1):
+	for i in range((vVector.size -1), 0, -1):
 		if (vVector[i] >= threshold):
 			bVCoord = i
 			break
@@ -116,7 +135,7 @@ def findcorners(vVector,hVector):
 			lHCoord = i
 			break
 	rHCoord = 0
-	for i in range(hVector.size,0,-1):
+	for i in range((hVector.size -1),0,-1):
 		if (hVector[i] >= threshold):
 			rHCoord = i
 			break
@@ -126,7 +145,8 @@ def findcorners(vVector,hVector):
 	print("lHCoord:" + str(lHCoord))
 	print("rHCoord:" + str(rHCoord))
 	
-	return []
+	#We found them
+	return (lHCoord - epShift,tVCoord - epShift,rHCoord + epShift,bVCoord + epShift)
 
 def cropimagealg(imLoc):
 	#get image
@@ -152,7 +172,12 @@ def cropimagealg(imLoc):
 	#checkhistograms(vVector,hVector)
 	
 	#Now that we have gotten the histograms, lets deal find the corners
-	coordArr = findcorners(vVector,hVector)
+	coord4Tup = findcorners(vVector,hVector)
+	
+	#Finaly, do a crop and save!
+	openIm.crop(coord4Tup).save("result.png")
+	
+	return
 	
 def main():
 	processargs() #everything is global anyways.
