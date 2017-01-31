@@ -2,9 +2,9 @@ from PIL import Image, ImageOps, ImageFilter
 from numpy import array, zeros
 from math import floor, ceil
 from matplotlib import pyplot
-from os import listdir, chdir
+from os import listdir, chdir, remove
 import getopt, sys
-
+import shutil
 
 #The getOpt page has shown me a new code style, so I will use it. All credit goes to the person who
 #wrote that page:
@@ -18,8 +18,9 @@ ipvscantools -h -v -d -i -n [filenaming] [folder to read] [folder to write to]
 	-d: Delete temp files in folder, after you are done (stupidly hunts for all .jpg files, and kills them). 
 	-n: Prefix for naming of files.
 	-i: Invert image colors.
-	-t: threshold counts for page boundary in Edge image analysis. Default is 10000.
-	-e: Epsilon Margin for crop; can be positive (bigger crop) or negative (smaller crop). Default is zero
+	-t: Threshold counts for page boundary in edge image analysis. Default is 10000.
+	-e: Epsilon Margin for crop; is a positive margin that tightens the crop. Default is zero
+	-m: numPrefix: a positive number in which we start our image enumeration (naming scheme on saving).
 	-s: Skip Step; when histograming, only every xth pixel is considered. Define X with this. Default is 3
 
 Other Notes:
@@ -40,6 +41,7 @@ ipvscantools version 0.1. Created by Sean al-Baroudi (sean.al.baroudi@gmail.com)
 deleteSwitch = False
 invertSwitch = False
 filePrefix = ""
+numStart = 1
 
 inputDir = ""
 outputDir = ""
@@ -58,9 +60,9 @@ def printparameters():
 
 def processargs():
 	global deleteSwitch, invertSwitch, filePrefix, inputDir, outputDir #[2]
-	global threshold, skipStep
+	global threshold, skipStep,epShift
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hvdin:t:s:")
+		opts, args = getopt.getopt(sys.argv[1:], "hvdin:t:s:e:m:")
 	except getopt.GetoptError as err:
 		print(err)
 		sys.exit(2)
@@ -87,6 +89,10 @@ def processargs():
 			deleteSwitch = True
 		elif (o == "-n" and  a != ""): 
 			filePrefix = a
+		elif (o == "-m" and  a != ""): 
+			numStart = int(a)
+		elif (o == "-e" and  a != ""): 
+			epShift = int(a)
 		elif (o == "-t" and  a != ""):  #target threshold
 			threshold = int(a)
 		elif (o == "-s" and  a != ""):  #skipstep (to speed up histogram calcs)
@@ -140,15 +146,18 @@ def findcorners(vVector,hVector):
 			rHCoord = i
 			break
 
-	print("tVCoord:" + str(tVCoord))
-	print("bVCoord:" + str(bVCoord))
-	print("lHCoord:" + str(lHCoord))
-	print("rHCoord:" + str(rHCoord))
+	#checkhistograms(vVector, hVector)
+
+	#print("tVCoord:" + str(tVCoord))
+	#print("bVCoord:" + str(bVCoord))
+	#print("lHCoord:" + str(lHCoord))
+	#print("rHCoord:" + str(rHCoord))
 	
 	#We found them
-	return (lHCoord - epShift,tVCoord - epShift,rHCoord + epShift,bVCoord + epShift)
+	return (lHCoord + epShift,tVCoord + epShift,rHCoord - epShift,bVCoord - epShift)
 
 def cropimagealg(imLoc):
+	global filePrefix, numStart
 	#get image
 	openIm = prepimage(imLoc)
 	#we need to create a separate image, in which to do analysis.
@@ -168,15 +177,14 @@ def cropimagealg(imLoc):
 	for i in range(0, hLim):
 		for j in range (0, vLim,skipStep):
 			hVector[i] = imArr[j,i] + hVector[i]
-	
-	#checkhistograms(vVector,hVector)
-	
+
 	#Now that we have gotten the histograms, lets deal find the corners
 	coord4Tup = findcorners(vVector,hVector)
 	
 	#Finaly, do a crop and save!
-	openIm.crop(coord4Tup).save("result.png")
-	
+	openIm.crop(coord4Tup).save(filePrefix + str(numStart) + ".png")
+	numStart = numStart + 1
+	print("Cropping of Image " + filePrefix + str(numStart) + ".png" + " is complete.")
 	return
 	
 def main():
@@ -193,12 +201,29 @@ def main():
 	if (len(jpgList) == 0):
 		print("No JPGs were found in input directory. Aborting.")
 		sys.exit(2)
-	
+	jpgList.sort()
 	chdir(inputDir)
 	#get a list of all .jpg files (pumped out by IPEVO software)
 	#The directory has JPGS, lets move on.
 	for imgName in jpgList:
 		cropimagealg(imgName)
+	
+	#Now that we are done...move to target directory
+	
+	try: #[4]
+		#first delete all jpgs.
+		for jpgs in jpgList:
+			remove("./" + jpgs)
+		chdir("..")
+		shutil.move(inputDir, outputDir) #copytree points to a directory, but places that directory in the output area. It also creates a folder if necessary, by default
+		#if delete option selected, lets get rid of our input Directory
+	# Directories are the same
+	except shutil.Error as e:
+		print('Directory not copied. Error: %s' % e)
+		# Any error saying that the directory doesn't exist
+	except OSError as e:
+		print('Directory not copied. Error: %s' % e)
+
 
 if __name__ == "__main__":
 	main()
@@ -212,4 +237,8 @@ it was found that the SNR due to reflectivity off the background surface was cau
 our SNR gets pushed up, the the boundaries become much more defined. There is a a larger computational penalty,
 as our time is now O(mn), where m and n are the dimensions of the image (which is very large ). I tried skipping every
 pth point in order to get O(mn/p) time. If an image takes 10 seconds, thats not too bad.
+[4]: CopyTree: http://pythoncentral.io/how-to-recursively-copy-a-directory-folder-in-python/
+This code was just ripped directly from the page.
+[5]: https://docs.python.org/2/library/shutil.html
+
 '''
