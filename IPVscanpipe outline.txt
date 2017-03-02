@@ -1,20 +1,20 @@
 Picture/Diagram scanning system:
 
 Proposal: I wish to have a fast, standardized method for scanning in images and documents into my computer,
-Using an IPEVO-Ziggi HD[1] camera and its software.
+Using an IPEVO-Ziggi HD camera and its software.
 
 Currently, document scanning involves a laborious process of:
 
 (1) Aligning the camera for every new job - (with three degrees of freedom)
 (2) Saving the images to disk
-(3) Opening the images in Pinta
+(3)Opening the images in Pinta
 (4) Editing and cropping the images, 
 (5) Saving and renaming the images
 (6) Placing them in the respective folder they belong.
 
 
-To save time and streamline the process, a lot of these steps can be avoided. In particular, the following things can be improved,
-or are just wasteful:
+To save time, and streamline the process, a lot of these steps can be avoided. In particular, the following things can be improved,
+or are just wasteful (in terms of Energy and Time):
 
 - You move the camera often, because different documents are different sizes.
 - You spend a lot of time lining up the documents straight (because there are no standard guides)
@@ -40,7 +40,7 @@ Then, with a few simple tools and a python script this should be achieveable.
 
 Script Requirements and API:
 
-ipvscantools -h -v -d -i -n [filenaming] [folder to read] [folder to write to]
+pscantools -h -v -d -i -n [filenaming] [folder to read] [folder to write to]
 
 	-h: Help string for console
 	-v: version information
@@ -68,5 +68,18 @@ Using Dolphin (or another GUI), I take a look at the processed images, and place
 
 This process repeats until all my scans are done.
 
-References:
-[1] Ipevo Ziggi-HD Camera: https://www.amazon.com/Ipevo-Ziggi-HD-High-Definition-Document-CDVU-06IP/dp/B01530XGMA/ref=sr_1_1?ie=UTF8&qid=1488480267&sr=8-1&keywords=Ipevo+Ziggi-hd
+Order of Development:
+
+- standardization of setup and hardware
+- setup folders and save areas; can things be partitioned?
+- getopt usage
+- code help and version information
+- experiment with Python image library
+      - opening files
+      - rotate files
+      - save files as png
+      - invert colors
+      - basic black/white edge detection
+			=> Finding points to define a crop square
+			=> cropping an image in general
+	  - read list of file, organize by timestamp iteration?
