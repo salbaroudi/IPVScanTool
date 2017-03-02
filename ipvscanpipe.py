@@ -58,6 +58,11 @@ def printparameters():
 	print("skipStep:" + str(skipStep))
 	return
 
+'''
+There would be too many variables to pass to functions, so I make a lot of things global. 
+
+Just let this happen. 
+'''
 def processargs():
 	global deleteSwitch, invertSwitch, filePrefix, inputDir, outputDir #[2]
 	global threshold, skipStep,epShift
@@ -183,8 +188,8 @@ def cropimagealg(imLoc):
 	
 	#Finaly, do a crop and save!
 	openIm.crop(coord4Tup).save(filePrefix + str(numStart) + ".png")
-	numStart = numStart + 1
 	print("Cropping of Image " + filePrefix + str(numStart) + ".png" + " is complete.")
+	numStart = numStart + 1
 	return
 	
 def main():

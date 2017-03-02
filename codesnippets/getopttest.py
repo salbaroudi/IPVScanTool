@@ -1,8 +1,15 @@
 import getopt
 import sys
 
-#The getOpt page has shown me a new code style, so I will use it. All credit goes to the person who
-#wrote that page:
+
+'''
+
+Test code by Sean al-Baroudi (sean.al.baroudi@gmail.com)
+
+The getOpt page has shown me a standard code style, so I will use it. All credit goes to the person who
+wrote that page: [1]
+
+'''
 
 helpString = '''Usage of ipvscantool:
 

@@ -2,13 +2,21 @@ from PIL import Image, ImageOps, ImageFilter
 from numpy import array, zeros
 from math import floor, ceil
 from matplotlib import pyplot
-from mpl_toolkits.mplot3d import Axes3D
 
-#This script utilizes the fact that edge noise on our black background seems to be below 50-80 pixel intensity,
-#when our image is transformed and converted to greyscale.
-#I use thresholding to detect when the "page edge" is found.
-#A number of lines are drawn in H and V directions, to find this edge. It is then averaged, and the corner points
-#for the crop is found.
+
+
+'''
+Experimental Script coded by Sean al-Baroudi sean.al.baroudi@gmail.com
+
+Note: The below represents a "Failed Idea" for the algorithm. I did Horizontal and Vertical Binning as the final
+solution to this problem.
+
+This script utilizes the fact that edge noise on our black background seems to be below 50-80 pixel intensity,
+when our image is transformed and converted to greyscale.
+I use thresholding to detect when the "page edge" is found.
+A number of lines are drawn in H and V directions, to find this edge. It is then averaged, and the corner points
+for the crop is found.
+'''
 
 #global variables:
 imgLoc = "../Standard Setup/standard3.jpg"
@@ -85,7 +93,7 @@ def main():
 	imgfinal.save('output.png')
 
 
-'''
+'
 	print(imArr.shape)
 	
 	k = 0
@@ -101,8 +109,6 @@ def main():
 			hVector[k] = imArr[j,i] + hVector[k]
 		k = k + 1
 
-'''
-'''
 	#We will probe from the top, and left of the image. This folllows array notation naturally.
 	maxHDepth = int(floor(depthPercentage*hLim))
 	maxVDepth = int(floor(depthPercentage*vLim))
@@ -123,11 +129,10 @@ def main():
 	
 	imgfinal = Image.fromarray(imArr)
 	imgfinal.save('output.png')
-'''
+
 
 if __name__ == "__main__":
 	main()
-
 
 
 '''

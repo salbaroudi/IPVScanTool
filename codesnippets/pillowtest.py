@@ -2,8 +2,13 @@ from PIL import Image, ImageOps, ImageFilter
 import numpy
 import matplotlib.pyplot as plt
 
-#This file tests out our cropping algorithm. It utilizes a simple edge image, and uses array methods
-#to get 4 corner points in which to accomplish the final crop.
+'''
+Test code written by Sean al-Baroudi (sean.al.baroudi@gmail.com)
+
+This file tests out our cropping algorithm. It utilizes a simple edge image, and uses array methods
+to get 4 corner points in which to accomplish the final crop.
+
+'''
 
 def profiles(arrImg):
 	g, axisArr = plt.subplots(2,2)
