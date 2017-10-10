@@ -1,7 +1,7 @@
 Picture/Diagram scanning system:
 
-Proposal: I wish to have a fast, standardized method for scanning in images and documents into my computer,
-Using an IPEVO-Ziggi HD[1] camera and its software.
+Proposal: A fast, standardized method for scanning in images and documents is needed.
+Let's use an IPEVO-Ziggi HD[1] camera and its software to help facilitate this.
 
 Currently, document scanning involves a laborious process of:
 
@@ -16,29 +16,26 @@ Currently, document scanning involves a laborious process of:
 To save time and streamline the process, a lot of these steps can be avoided. In particular, the following things can be improved,
 or are just wasteful:
 
-- You move the camera often, because different documents are different sizes.
-- You spend a lot of time lining up the documents straight (because there are no standard guides)
-- You manually rename files.
-- Directories where the files go are usually 5+ layers deep (in my "Universe" folder).
+- The camera often, because different documents are different sizes.
+- A lot of time is spent lining up the documents straight (because there are no standard guides)
+- Files are manually renamed.
 - The Pinta operations could be automated if proper standardization is used.
 
-To severely cut down on the amount of time and energy I waste, I propose the following:
+To severely cut down on the amount of time and energy that is wasted, I  propose the following:
 
 1) Fix the camera in a default position, with markings on a board to just line it up once.
 2) Use the maximal resolution setting, and place the camera as high as possible. Thus all sizes of documents can be scanned,
 and fine details can still be maintained (mostly - not a huge tradeoff).
-3) Keep all work for the week in a shallow folder in the /home folder. This is what you are currently working on, and where documents should be 
-scanned to. You can dive deep and place files where they belong at the end of the week (or month).
-4) Many editing operations can be done in python. In particular:
+3) Many editing operations can be done in python. In particular:
 	-Cropping: with absolute coordinates, or edge detection of a rectangle (using a contrasting board or pieces of black cardboard).
-	- automated naming: just pick a name and add numbers to the end
+	- automated naming: just pick a name and add numbers to the end.
 	- image rotation
 	- color manipulation: color inversion or B&W settings.
-5) You should be able to pipe data from the save folder, to the script, and output to a folder of your choosing.
+4) You should be able to pipe data from the save folder, to the script, and output to a folder of your choosing.
 
 Then, with a few simple tools and a python script this should be achieveable.
 
-Script Requirements and API:
+Script Requirements: Input settings and parameters:
 
 ipvscantools -h -v -d -i -n [filenaming] [folder to read] [folder to write to]
 
@@ -58,7 +55,7 @@ ipvscantools -h -v -d -i -n [filenaming] [folder to read] [folder to write to]
 
 General Usage of the Script:
 
-I have a pile of documents to scan. Before hand, i sort them into discrete piles (folders), and arrange them in the order I want them to be scanned.
+I have a pile of documents to scan. Before hand, I sort them into discrete piles (folders), and arrange them in the order I want them to be scanned.
 In my temporary work folder, I make a new folder as a home for the images. Next, I turn on the IPEVO camera, set it up, and scan each image one by one.
 These documents are saved to the standard Google Chromium download folder (setup beforehand).
 

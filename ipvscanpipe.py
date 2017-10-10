@@ -169,7 +169,7 @@ def cropimagealg(imLoc):
 	workIm = getworkimage(openIm)
 	imArr = array(workIm)
 	
-	#Gary's Idea: Lets bin everything into one vector, and see if the signal overtakes the noise after summing.
+	#Idea: Lets bin everything into one vector, and see if the signal overtakes the noise after summing.
 	#first, lets get the vertical binning:
 	#[3]
 	(hLim, vLim) = workIm.size 
