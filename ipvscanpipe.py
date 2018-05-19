@@ -19,6 +19,7 @@ ipvscantools -h -v -n [filenaming] -t [num+] -e [num+] -m [num+] -s [num+] -r [f
 	-e: Epsilon Margin for crop; is a positive margin that tightens the crop. Default is zero
 	-m: numPrefix: a positive number in which we start our image enumeration (naming scheme on saving).
 	-s: Skip Step; when histograming, only every xth pixel is considered. Define X with this. Default is 3
+	-q: Debug Mode: Show histogram for an image (for debugging purposes).
 
 Other Notes:
 	- Script will autorotate and crop images, based on predefined standard position [<--].
@@ -39,6 +40,7 @@ ipvscantools v0.2. Created by Sean al-Baroudi (sean.al.baroudi@gmail.com)
 #an object to store the command line arguments the user specifies.
 class Params:
 	def __init__(self):
+		self.debugMode = 0
 		self.filePrefix = "" #-n
 		self.numStart = 1 #-m
 		#Crop algorithm global variables:
@@ -54,7 +56,7 @@ class Params:
 #command line.
 def processargs(argObj):
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hvn:t:s:e:m:r:w:")
+		opts, args = getopt.getopt(sys.argv[1:], "hvqn:t:s:e:m:r:w:")
 	except getopt.GetoptError as err:
 		print(err)
 		sys.exit(2)
@@ -70,6 +72,8 @@ def processargs(argObj):
 		elif o == "-v":
 			print(versionString)
 			sys.exit(2)
+		elif o == "-q":
+			argObj.debugMode = True
 		elif (o == "-n" and  a != ""):
 			argObj.filePrefix = a
 		elif (o == "-m" and  a != ""):
@@ -134,9 +138,9 @@ def findcorners(vVector,hVector,par):
 			rHCoord = i
 			break
 
-	#For debugging
-	#_checkhistograms(vVector, hVector)
-	#_checkcropalgcorners(tVCoord, bVCoord, lHCoord, rHCoord)
+	if (par.debugMode == True):
+		_checkhistograms(vVector, hVector)
+		_checkcropalgcorners(tVCoord, bVCoord, lHCoord, rHCoord)
 
 	ep = par.epShift
 	#We found them
@@ -195,8 +199,10 @@ def _printparameters(argObj):
 #Purpose (Side-Effect): Produce two plots to inspect histogram.
 def _checkhistograms(vVector,hVector):
 	pyplot.plot(vVector)
+	pyplot.title("Vertically Binned Histogram.")
 	pyplot.show()
 	pyplot.plot(hVector)
+	pyplot.title("Horizontally Binned Histogram.")
 	pyplot.show()
 	return
 
